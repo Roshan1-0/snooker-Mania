@@ -374,7 +374,13 @@ export function processFoul(frameState, selectedBall, foulReason, playerNames, o
   const newHighestBreak = { ...frameState.highestBreak };
 
   let newPhase = frameState.phase;
-  // Phase stays same after foul (opponent plays from same position)
+
+  // If foul happens during COLOR_ON (a red was potted but colour wasn't),
+  // the colour is re-spotted and the opponent starts from RED_ON.
+  if (frameState.phase === PHASES.COLOR_ON && frameState.redsRemaining > 0) {
+    newPhase = PHASES.RED_ON;
+  }
+
   // Special: FINAL_BLACK foul — if scores equal after penalty, re-spot; else frame over
   let frameOver = false;
   let winner = null;
@@ -390,6 +396,7 @@ export function processFoul(frameState, selectedBall, foulReason, playerNames, o
       winner = p1 > p2 ? 'player1' : 'player2';
     }
   }
+
 
   const ballOnLabel = getBallOnLabel(frameState);
 
