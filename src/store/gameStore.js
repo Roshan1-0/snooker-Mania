@@ -135,11 +135,14 @@ const useGameStore = create(
           player1: matchConfig.player1Name,
           player2: matchConfig.player2Name,
         };
-        const { newState, shot } = processFoul(frameState, selectedBall, foulReason, playerNames, options);
+        const { suppressPanel, ...engineOptions } = options;
+        const { newState, shot } = processFoul(frameState, selectedBall, foulReason, playerNames, engineOptions);
         if (newState.frameOver) {
           get()._afterFrameEnd(newState);
         } else {
-          set({ frameState: newState, lastExplanation: shot.explanation, showFoulPanel: true });
+          // suppressPanel = true when foul is already confirmed via ball selection
+          // so we don't re-open the FoulPanel; game continues to opponent's turn
+          set({ frameState: newState, lastExplanation: shot.explanation, showFoulPanel: suppressPanel ? false : true });
         }
       },
 

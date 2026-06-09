@@ -37,8 +37,12 @@ export default function BallSelectionPanel() {
 
   const handleConfirmFoul = () => {
     if (!confirmBall) return;
-    doFoul(confirmBall, FOUL_REASONS.WRONG_BALL);
-    toast.error(`Foul! Wrong ball — ${matchConfig?.['player2Name'] ?? 'Opponent'} gets penalty points.`, {
+    const opponentName = matchConfig?.[
+      frameState?.currentPlayer === 'player1' ? 'player2Name' : 'player1Name'
+    ] ?? 'Opponent';
+    // suppressPanel: true — foul already registered here, no need to open FoulPanel
+    doFoul(confirmBall, FOUL_REASONS.WRONG_BALL, { suppressPanel: true });
+    toast.error(`Foul! Wrong ball — ${opponentName} gets penalty points.`, {
       icon: '⚠️', duration: 3000,
     });
     setConfirmBall(null);
